@@ -1,0 +1,22 @@
+language: generic # can't use language: python if we want to enable mac builds
+
+dist: trusty
+sudo: required
+
+before_install:
+  - sudo apt-get -q update
+  - sudo apt-get -y install at-spi2-core # ldtp needs this
+  - sudo apt-get -y install ldtp python-ldtp
+
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start # fake display for GUI testing
+  - sleep 3 # give xvfb some time to start
+
+script:
+  - export DOWNLOAD_QT_VERSION="5.9*" # most recent in 5.9.X series, or 5.9
+  - export DOWNLOAD_QT_PATH="${HOME}/Qt"
+  - export DOWNLOAD_QT_COMPONENTS="*gcc*"$'\n' # create list with \n separator
+  - export DOWNLOAD_QT_COMPONENTS+="Qt WebEngine"$'\n' # append item to list
+  - ./script.sh
+  - find "${DOWNLOAD_QT_PATH}"
